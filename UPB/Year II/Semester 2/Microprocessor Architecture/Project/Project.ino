@@ -7,10 +7,13 @@
 int activeBuzzer = 13; //buzzer-ul este conectat pe pinul 13
 
 Servo servoMotor; //initializez servo-ul
+int position = 0; //pozitia initiala: 0
+
 
 //initializez senzorul ultrasonic
 SR04 ultrasonicSensor = SR04(ECHO_PIN, TRIG_PIN);
-long distance = ultrasonicSensor.Distance();
+long distance;
+
 
 //initializez senzorul IR
 int reciever = 9;
@@ -18,102 +21,107 @@ IRrecv irrecv(reciever);
 decode_results results;
 int remoteButton;
 
+void setup(){
+  Serial.begin(9600); 
+  pinMode(activeBuzzer, OUTPUT); //activez buzzer-ul ca output */
+  servoMotor.attach(10); //servo-ul este conectat pe pinul 10
+  irrecv.enableIRIn(); //activez reciever-ul IR
+}
+
 //traducerea butoanelor folosite de pe telecomanda IR
 void translateIR(){
-    switch(results.value){
-    case 0xFF30CF: //butonul 1 de pe telecomanda, va fi folosit pentru modul autonom
-        remoteButton = 1;
+  switch(results.value){
+  case 0xFF629D: //butonul 1 de pe telecomanda, va fi folosit pentru modul autonom
+    autonomousMode();
     
-    case 0xFF18E7: //butonul 2 de pe telecomanda, va fi folosit pentru deschiderea manuala
-        remoteButton = 2;
+  case 0xFFE21D: //butonul 2 de pe telecomanda, va fi folosit pentru deschiderea manuala
+    manualOverrideClose();
 
-    case 0xFF7A85: //butonul 3 de pe telecomanda, va fi folosit pentru inchiderea manuala
-        remoteButton = 3;
+  case 0xFFA25D: //butonul 3 de pe telecomanda, va fi folosit pentru inchiderea manuala
+    manualOverrideOpen();
     
-    default:
-        Serial.println("Button not found");
-    }
+  default:
+    Serial.println("Button not found");
+   }
 }
 
 void autonomousMode(){
-    //servo-ul va deschide usor capacul
-    for(int position = 0; position <= 215; position++){ 
-        servoMotor.write(position);            
-        delay(15);
-    }
+  Serial.println("Autonomous mode");
+  //servo-ul va deschide usor capacul
+  for(position = 0; position <= 115; position++){ 
+      servoMotor.write(position);            
+      delay(15);
+  }
 
-    delay(8000); //timp de asteptate: 8 secunde
+  delay(8000); //timp de asteptate: 8 secunde
 
-    //sunet de avertizare
-    digitalWrite(activeBuzzer, HIGH);
-    delay(1);
-    digitalWrite(activeBuzzer, LOW);
+  //sunet de avertizare
+  digitalWrite(activeBuzzer, HIGH);
+  delay(1);
+  digitalWrite(activeBuzzer, LOW);
 
-    //timp de asteptare: 2 secunde
-    delay(2000);
+   //timp de asteptare: 2 secunde
+  delay(2000);
 
-    //servo-ul inchide capacul
-    servoMotor.write(20);
+  //servo-ul inchide capacul
+  servoMotor.write(20);
+
+  Serial.println("Autonomous mode ended");
 }
 
 void manualOverrideOpen(){
-    //sunet de avertizare
-    digitalWrite(activeBuzzer, HIGH);
-    delay(1);
-    digitalWrite(activeBuzzer, LOW);
-    delay(1000);
+  Serial.println("Manual open");
 
-    //servo-ul va deschide usor capacul
-    for(int position = 0; position <= 215; position++){
-        servoMotor.write(position);            
-        delay(15);
-    }
+  //sunet de avertizare
+  digitalWrite(activeBuzzer, HIGH);
+  delay(1);
+  digitalWrite(activeBuzzer, LOW);
+  delay(1000);
 
-    //sunet de avertizare
-    digitalWrite(activeBuzzer, HIGH);
-    delay(1);
-    digitalWrite(activeBuzzer, LOW);
-    delay(1);
+  //servo-ul va deschide usor capacul
+  for(int position = 0; position <= 115; position++){
+      servoMotor.write(position);            
+      delay(15);
+  }
+
+  //sunet de avertizare
+  digitalWrite(activeBuzzer, HIGH);
+  delay(1);
+  digitalWrite(activeBuzzer, LOW);
+  delay(1);
+
+  Serial.println("Manual open ended");
 }
 
 void manualOverrideClose(){
-    //sunet de avertizare
-    digitalWrite(activeBuzzer, HIGH);
-    delay(1);
-    digitalWrite(activeBuzzer, LOW);
-    delay(1000);
+  Serial.println("Manual close");
 
-    //servo-ul inchide capacul
-    servoMotor.write(20);
+  //sunet de avertizare
+  digitalWrite(activeBuzzer, HIGH);
+  delay(1);
+  digitalWrite(activeBuzzer, LOW);
+  delay(1000);
 
-    //sunet de avertizare
-    digitalWrite(activeBuzzer, HIGH);
-    delay(1);
-    digitalWrite(activeBuzzer, LOW);
-    delay(1);
-}
+  //servo-ul inchide capacul
+  servoMotor.write(20);
 
-void setup(){
-    Serial.begin(9600); //pentru debugging
-    pinMode(activeBuzzer, OUTPUT); //activez buzzer-ul ca output
-    servoMotor.attach(10); //servo-ul este conectat pe pinul 10
-    irrecv.enableIRIn(); //activez reciever-ul IR
+  //sunet de avertizare
+  digitalWrite(activeBuzzer, HIGH);
+  delay(1);
+  digitalWrite(activeBuzzer, LOW);
+  delay(1);
+
+  Serial.println("Manual close ended");
 }
 
 void loop(){
-    if(remoteButton == 1 || distance <= 4){ //daca este apasat butonul 1 de pe telecomanda sau mana trece la mai putin de 4cm, se porneste modul autonom
-        Serial.println("Autonomous mode");
-        autonomousMode();
-        Serial.println("Autonomous mode ended");
-    }
-    else if(remoteButton == 2){ //daca este apasat butonul 2 de pe telecomanda, cutia se va deschide manual
-        Serial.println("Manual override open");
-        manualOverrideOpen();
-        Serial.println("Manual override open ended");
-    }
-    else if(remoteButton == 3){ //daca este apasat butonul 3 de pe telecomanda, cutia se va inchide manual
-        Serial.println("Manual override close");
-        manualOverrideClose();
-        Serial.println("Manual override close ended");
-    }
+  distance = ultrasonicSensor.Distance(); 
+
+  if(irrecv.decode(&results)){
+    translateIR();
+    irrecv.resume();
+  }
+
+  if(distance <= 4) autonomousMode(); //daca mana trece la mai putin de 4cm, se porneste modul autonom
+
 }
