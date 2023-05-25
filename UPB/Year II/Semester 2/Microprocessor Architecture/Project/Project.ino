@@ -122,6 +122,6 @@ void loop(){
     irrecv.resume();
   }
 
-  if(distance <= 4) autonomousMode(); //daca mana trece la mai putin de 4cm, se porneste modul autonom
+  if(distance <= 8) autonomousMode(); //daca mana trece la mai putin de 4cm, se porneste modul autonom
 
 }
