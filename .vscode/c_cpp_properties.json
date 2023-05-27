@@ -22,8 +22,8 @@
                 "c:\\users\\aicam\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include-fixed",
                 "c:\\users\\aicam\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include",
                 "${workspaceFolder}/Personal/libraries/Makeblock-Libraries-master/src/utility",
-                "${workspaceFolder}/libraries/HC-SR04",
-                "${workspaceFolder}/libraries/IRremote"
+                "${workspaceFolder}/UPB/Year II/Semester 2/Microprocessor Architecture/Project/HC-SR04",
+                "${workspaceFolder}/UPB/Year II/Semester 2/Microprocessor Architecture/Project/IRremote"
             ],
             "forcedInclude": [
                 "C:\\Users\\aicam\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Arduino.h"
@@ -534,8 +534,7 @@
                 "__ATOMIC_RELEASE=3",
                 "__BUILTIN_AVR_FMUL=1",
                 "USBCON"
-            ],
-            "configurationProvider": "ms-vscode.cmake-tools"
+            ]
         }
     ]
 }

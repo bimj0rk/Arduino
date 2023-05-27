@@ -1,8 +1,8 @@
 #include <Servo.h>
 #include "SR04.h"
 #include "IRremote.h"
-#define TRIG_PIN 12
-#define ECHO_PIN 11
+#define trigPin 12
+#define echoPin 11
 
 int activeBuzzer = 13; //buzzer-ul este conectat pe pinul 13
 
@@ -11,7 +11,7 @@ int position = 0; //pozitia initiala: 0
 
 
 //initializez senzorul ultrasonic
-SR04 ultrasonicSensor = SR04(ECHO_PIN, TRIG_PIN);
+SR04 ultrasonicSensor = SR04(echoPin, trigPin);
 long distance;
 
 
@@ -31,18 +31,21 @@ void setup(){
 //traducerea butoanelor folosite de pe telecomanda IR
 void translateIR(){
   switch(results.value){
-  case 0xFF629D: //butonul 1 de pe telecomanda, va fi folosit pentru modul autonom
-    autonomousMode();
-    
-  case 0xFFE21D: //butonul 2 de pe telecomanda, va fi folosit pentru deschiderea manuala
-    manualOverrideClose();
+    case 0xFF629D: //butonul CH de pe telecomanda, va fi folosit pentru modul autonom
+      autonomousMode();
+      break;
+      
+    case 0xFFA857: //butonul + de pe telecomanda, va fi folosit pentru deschiderea manuala
+      manualOverrideOpen();
+      break;
 
-  case 0xFFA25D: //butonul 3 de pe telecomanda, va fi folosit pentru inchiderea manuala
-    manualOverrideOpen();
-    
-  default:
-    Serial.println("Button not found");
-   }
+    case 0xFFE01F: //butonul - de pe telecomanda, va fi folosit pentru inchiderea manuala
+      manualOverrideClose();
+      break;
+
+    default:
+      Serial.println("Button not found");
+  }
 }
 
 void autonomousMode(){
@@ -122,6 +125,6 @@ void loop(){
     irrecv.resume();
   }
 
-  if(distance <= 8) autonomousMode(); //daca mana trece la mai putin de 4cm, se porneste modul autonom
+  if(distance <= 4) autonomousMode(); //daca mana trece la mai putin de 4cm, se porneste modul autonom
 
 }

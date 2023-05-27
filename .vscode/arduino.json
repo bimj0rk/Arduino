@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:uno",
     "programmer": "avrisp",
-    "sketch": "UPB/Year II/Semester 2/Microprocessor Architecture/Laboratory_1/Laboratory_1.ino"
+    "sketch": "UPB\\Year II\\Semester 2\\Microprocessor Architecture\\Project\\Project.ino"
 }
