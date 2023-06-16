@@ -1,6 +1,6 @@
 #include <Adafruit_GFX.h>    
 #include <MCUFRIEND_kbv.h>   
-#include "pics.h"
+#include <pics.h>
 
 MCUFRIEND_kbv tft;
 
